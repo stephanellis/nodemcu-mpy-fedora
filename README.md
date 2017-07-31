@@ -19,7 +19,7 @@ were available in the fedora 26 repository.
 * in the screen session, use CTRL-a k to get out
 
 ### Copy a script to the NodeMCU to be run automatically
-* ampy -p /dev/ttyUSB0 main.py
+* ampy -p /dev/ttyUSB0 put main.py
 * of course, edit main.py to do what you want
 * if there is a problem, use the repl to see a traceback.
 
