@@ -5,6 +5,7 @@
 * packages installed (with dnf):
   * ampy
   * esptool
+  * screen
 
 I was pleasantly surprised that these packages were all you need and that they
 were available in the fedora 26 repository.
@@ -15,7 +16,7 @@ were available in the fedora 26 repository.
 
 ### Start writing some python code on the NodeMCU
 * use screen to get at the REPL that's running on the chip:
-  * screen /dev/ttyUSB0 11500 or run the nodemcu_repl.sh scripts
+  * screen /dev/ttyUSB0 11500 or run the nodemcu_repl.sh script
 * in the screen session, use CTRL-a k to get out
 
 ### Copy a script to the NodeMCU to be run automatically
