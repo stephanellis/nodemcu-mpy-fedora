@@ -101,3 +101,5 @@ ENV/
 .mypy_cache/
 
 esp8266*
+
+settings.json
