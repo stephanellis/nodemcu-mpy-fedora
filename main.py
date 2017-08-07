@@ -7,6 +7,9 @@ import network
 
 p = machine.Pin(2, machine.Pin.OUT)
 p.on()
+p2 = machine.Pin(4, machine.Pin.PULL_UP)
+
+
 BLINK_DELAY=0.1
 MEASR_DELAY=10
 
@@ -14,6 +17,10 @@ def blink():
     p.off()
     time.sleep(BLINK_DELAY)
     p.on()
+    p2.on()
+    time.sleep(BLINK_DELAY)
+    p2.off()
+
     
 
 f = open("settings.json")
