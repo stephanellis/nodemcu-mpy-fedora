@@ -4,6 +4,7 @@ import time
 import json
 import machine
 import network
+from umqtt.simple import MQTTClient
 
 p = machine.Pin(2, machine.Pin.OUT)
 p.on()
@@ -33,6 +34,15 @@ sta = network.WLAN(network.STA_IF)
 sta.active(True)
 sta.connect(settings["network"], settings["password"])
 
+c = MQTTClient(settings["name"], settings["broker"])
+
+while True:
+    if sta.isconnected():
+        c.connect()
+        break
+    time.sleep(1)
+
 while True:
     blink()
+    c.publish(settings["topic"], "Blinked!")
     time.sleep(MEASR_DELAY)

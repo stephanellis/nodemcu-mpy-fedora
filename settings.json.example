@@ -1,6 +1,8 @@
 {
   "password": "mywirelesspassword", 
   "name": "nodemcu1", 
-  "network": "mywirelessnetwork"
+  "network": "mywirelessnetwork",
+  "broker": "192.168.1.2",
+  "topic": "my-mqtt-topic"
 }
 
