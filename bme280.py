@@ -1,3 +1,36 @@
+# Authors: Paul Cunnane 2016, Peter Dahlebrg 2016
+#
+# This module borrows from the Adafruit BME280 Python library. Original
+# Copyright notices are reproduced below.
+#
+# Those libraries were written for the Raspberry Pi. This modification is
+# intended for the MicroPython and esp8266 boards.
+#
+# Copyright (c) 2014 Adafruit Industries
+# Author: Tony DiCola
+#
+# Based on the BMP280 driver with BME280 changes provided by
+# David J Taylor, Edinburgh (www.satsignal.eu)
+#
+# Based on Adafruit_I2C.py created by Kevin Townsend.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 
 import time
 from ustruct import unpack, unpack_from
@@ -171,89 +204,3 @@ class BME280:
         hd = h * 100 // 1024 - hi * 100
         return ("{}C".format(t / 100), "{}.{:02d}hPa".format(pi, pd),
                 "{}.{:02d}%".format(hi, hd))
-
-
-import esp
-import time
-import json
-import machine
-import network
-from umqtt.robust import MQTTClient
-
-p2 = machine.Pin(4, machine.Pin.PULL_UP)
-
-i2c_1 = machine.I2C(scl=machine.Pin(0), sda=machine.Pin(2))
-i2c_2 = machine.I2C(scl=machine.Pin(14), sda=machine.Pin(12))
-bme1 = BME280(i2c=i2c_1)
-bme2 = BME280(i2c=i2c_2)
-
-BLINK_DELAY=0.1
-MEASR_DELAY=60
-
-def blink():
-    p2.on()
-    time.sleep(BLINK_DELAY)
-    p2.off()
-
-
-def get_rssi():
-    nets = sta.scan()
-    for n in nets:
-        if n[0].decode() == settings["network"]:
-            return n[3]
-    return None
-
-
-def ctof(t):
-    return t * (9 / 5) + 32
-
-
-f = open("settings.json")
-raw_settings = "".join(f.readlines())
-f.close()
-
-settings = json.loads(raw_settings)
-
-credentials = bytes("channels/{:s}/publish/{:s}".format(settings["channel"], settings["apikey"]), 'utf-8')
-
-sta = network.WLAN(network.STA_IF)
-sta.active(True)
-sta.connect(settings["network"], settings["password"])
-
-#randomNum = int.from_bytes(uos.urandom(3), 'little')
-#myMqttClient = bytes("client_"+str(randomNum), 'utf-8')
-
-c = MQTTClient(
-    client_id = "client_1",
-    server = settings["broker"],
-    user = settings["userid"],
-    password = settings["mqttapikey"],
-    port = 1883
-    )
-while True:
-    print("connecting to wifi")
-    if sta.isconnected():
-        print("connected!")
-        c.connect()
-        print("mqtt connected!")
-        break
-    time.sleep(1)
-
-
-time.sleep(5)
-
-counter = 0
-while True:
-    blink()
-    #print("BME1", bme1.values)
-    #print("BME2", bme2.values)
-    rv1 = bme1.values
-    rv2 = bme2.values
-    t1 = ctof(float(rv1[0][:-1]))
-    t2 = ctof(float(rv2[0][:-1]))
-    h1 = float(rv1[2][:-1])
-    h2 = float(rv2[2][:-1])
-    payload = bytes("field1={:.1f}&field2={:.1f}&field3={:.1f}&field4={:.1f}&field5={:d}&field6={:d}\n".format(t1, t2, h1, h2, get_rssi(), esp.freemem()), 'utf-8')
-    c.publish(credentials, payload)
-    counter += 1
-    time.sleep(MEASR_DELAY)
