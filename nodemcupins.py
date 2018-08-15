@@ -1,0 +1,11 @@
+PIN_D0   = 16
+PIN_D1   = 5
+PIN_D2   = 4
+PIN_D3   = 0
+PIN_D4   = 2
+PIN_D5   = 14
+PIN_D6   = 12
+PIN_D7   = 13
+PIN_D8   = 15
+PIN_D9   = 3
+PIN_D10  = 1
